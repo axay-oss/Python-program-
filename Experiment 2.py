@@ -29,4 +29,3 @@ b = False
 print("AND:", a and b)
 print("OR:", a or b)
 print("NOT:", not a)
-Ajun kahi images astil tar pathva 👍
