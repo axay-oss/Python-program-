@@ -1,0 +1,118 @@
+#Python Program Using SimPy to Simulate a Single-Server Queue and Analyze Customer Waiting Time
+import simpy
+
+wait_times = []
+
+def customer(env, server, name):
+    arrival = env.now
+
+    with server.request() as req:
+        yield req
+        wait = env.now - arrival
+        wait_times.append(wait)
+
+        print(name, "served at", env.now)
+        yield env.timeout(3)
+
+def source(env, server):
+    for i in range(5):
+        env.process(customer(env, server, f"C{i+1}"))
+        yield env.timeout(2)
+
+env = simpy.Environment()
+server = simpy.Resource(env, capacity=1)
+
+env.process(source(env, server))
+env.run()
+
+print("Average Waiting Time =", sum(wait_times) / len(wait_times))
+
+#Python Program: Two Servers and Comparison with Single Server
+import simpy
+
+wait1 = []
+wait2 = []
+
+# Single Server
+def customer1(env, server):
+    arrival = env.now
+    with server.request() as req:
+        yield req
+        wait1.append(env.now - arrival)
+        yield env.timeout(3)
+
+# Two Servers
+def customer2(env, server):
+    arrival = env.now
+    with server.request() as req:
+        yield req
+        wait2.append(env.now - arrival)
+        yield env.timeout(3)
+
+# Customer Generator
+def source(env, server, func):
+    for i in range(5):
+        env.process(func(env, server))
+        yield env.timeout(2)
+
+# Single Server Simulation
+env = simpy.Environment()
+server = simpy.Resource(env, capacity=1)
+env.process(source(env, server, customer1))
+env.run()
+
+# Two Server Simulation
+env = simpy.Environment()
+server = simpy.Resource(env, capacity=2)
+env.process(source(env, server, customer2))
+env.run()
+
+print("Average Waiting Time (1 Server) =", sum(wait1)/len(wait1))
+print("Average Waiting Time (2 Servers) =", sum(wait2)/len(wait2))
+
+#Study of Parameters
+
+import simpy
+
+def customer(env, server):
+    with server.request() as req:
+        yield req
+        yield env.timeout(4)   # Service Time
+
+def source(env, server):
+    for i in range(5):
+        env.process(customer(env, server))
+        yield env.timeout(2)   # Interarrival Time
+
+env = simpy.Environment()
+server = simpy.Resource(env, capacity=1)
+
+env.process(source(env, server))
+env.run()
+
+#code with Average Witing time
+
+import simpy
+
+wait = []
+
+def customer(env, server):
+    arrival = env.now
+
+    with server.request() as req:
+        yield req
+        wait.append(env.now - arrival)
+        yield env.timeout(3)
+
+def source(env, server):
+    for i in range(5):
+        env.process(customer(env, server))
+        yield env.timeout(2)
+
+env = simpy.Environment()
+server = simpy.Resource(env, capacity=1)
+
+env.process(source(env, server))
+env.run()
+
+print("Average Waiting Time =", sum(wait)/len(wait))
